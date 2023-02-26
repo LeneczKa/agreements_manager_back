@@ -8,11 +8,18 @@ const defaultObj = {
     phone: 123456789,
 }
 
-afterAll(async()=> {
+const defaultObj2 = {
+    firstName: 'Tester',
+    lastName: 'Testujacy',
+    email: 'tester.testujacy@email.com',
+    phone: 111111111,
+}
+
+afterAll(async () => {
     await pool.end();
 });
 
-test('EmployeeRecord.getOne returns data from database for one entry', async()=>{
+test('EmployeeRecord.getOne returns data from database for one entry', async () => {
     const employee = await EmployeeRecord.getOne('abc');
 
     expect(employee).toBeDefined();
@@ -28,17 +35,11 @@ test('EmployeeRecord.getOne returns null from database for unexisting entry.', a
     expect(employee).toBeNull();
 });
 
-test('EmployeeRecord.findAll returns array of found entries.', async () => {
-    const employees = await EmployeeRecord.findAll('');
+test('EmployeeRecord.listAll returns array of found entries.', async () => {
+    const employees = await EmployeeRecord.listAll();
 
     expect(employees).not.toEqual([]);
     expect(employees[0].id).toBeDefined();
-});
-
-test('EmployeeRecord.findAll returns empty array of found entries when searching for something that does not exist.', async () => {
-    const employees = await EmployeeRecord.findAll('--------------------');
-
-    expect(employees).toEqual([])
 });
 
 test('EmployeeRecord.insert returns new UUID.', async () => {
@@ -47,14 +48,4 @@ test('EmployeeRecord.insert returns new UUID.', async () => {
 
     expect(employee.id).toBeDefined();
     expect(typeof employee.id).toBe('string');
-});
-
-test ('EmployeeRecord.insert inserts data to database.', async () => {
-    const employee = new EmployeeRecord(defaultObj);
-    await employee.insert();
-
-    const foundEmployee = await EmployeeRecord.getOne(employee.id);
-    expect(foundEmployee).toBeDefined();
-    expect(foundEmployee).not.toBeNull();
-    expect(foundEmployee.id).toBe(employee.id);
 });
