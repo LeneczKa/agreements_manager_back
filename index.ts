@@ -2,7 +2,7 @@ import express from 'express';
 import cors from 'cors';
 import 'express-async-errors';
 import {handleError} from "./utils/errors";
-import {employeeRouter} from "./routers/employees";
+import {employeeRouter} from "./routers/employee";
 
 import './utils/db'
 
