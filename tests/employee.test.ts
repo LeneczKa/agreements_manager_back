@@ -1,6 +1,5 @@
 import {pool} from "../utils/db";
 import {EmployeeRecord} from "../records/employee.record";
-import {EmployeeEntity} from "../types";
 
 const defaultObj = {
     firstName: 'Test',
@@ -40,4 +39,22 @@ test('EmployeeRecord.findAll returns empty array of found entries when searching
     const employees = await EmployeeRecord.findAll('--------------------');
 
     expect(employees).toEqual([])
+});
+
+test('EmployeeRecord.insert returns new UUID.', async () => {
+    const employee = new EmployeeRecord(defaultObj);
+    await employee.insert();
+
+    expect(employee.id).toBeDefined();
+    expect(typeof employee.id).toBe('string');
+});
+
+test ('EmployeeRecord.insert inserts data to database.', async () => {
+    const employee = new EmployeeRecord(defaultObj);
+    await employee.insert();
+
+    const foundEmployee = await EmployeeRecord.getOne(employee.id);
+    expect(foundEmployee).toBeDefined();
+    expect(foundEmployee).not.toBeNull();
+    expect(foundEmployee.id).toBe(employee.id);
 });

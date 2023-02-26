@@ -2,6 +2,7 @@ import {EmployeeEntity, NewEmployeeEntity} from "../types";
 import {ValidationError} from "../utils/errors";
 import {pool} from "../utils/db";
 import {FieldPacket} from "mysql2";
+import {v4 as uuid} from 'uuid';
 
 type EmployeeRecordResults = [EmployeeEntity[], FieldPacket[]];
 
@@ -40,14 +41,19 @@ export class EmployeeRecord implements EmployeeEntity {
         return results.length === 0 ? null : new EmployeeRecord(results[0]);
     }
 
-    async insert(): Promise<void> {
-
-    }
-
     static async findAll(lastName: string): Promise<EmployeeEntity[]> {
         const [results] = await pool.execute("SELECT * FROM `employees` WHERE `lastName` LIKE :search", {
             search: `%${lastName}`,
         }) as EmployeeRecordResults;
         return results.map(obj => new EmployeeRecord(obj));
+    }
+
+    async insert(): Promise<void> {
+        if(!this.id) {
+            this.id = uuid();
+        } else {
+            throw new Error('Cennot insert something that is already inserted!')
+        }
+        await pool.execute("INSERT INTO `employees` (`id`, `firstName`, `lastName`, `email`, `phone`) VALUES (:id, :firstName, :lastName, :email, :phone)", this)
     }
 };
