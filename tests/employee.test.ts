@@ -49,3 +49,14 @@ test('EmployeeRecord.insert returns new UUID.', async () => {
     expect(employee.id).toBeDefined();
     expect(typeof employee.id).toBe('string');
 });
+
+test('EmployeeRecord.update updateing data', async () => {
+    const employee = await EmployeeRecord.getOne('abc');
+    const employeeUpdated = {
+        ...employee,
+        ...defaultObj2
+    };
+
+    await employeeUpdated.update();
+
+})

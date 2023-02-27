@@ -20,3 +20,13 @@ employeeRouter
 
         res.json(newEmployee);
     })
+    .put('/update/:id', async (req, res) => {
+        const employee = await EmployeeRecord.getOne(req.params.id);
+        const employeeEdited = {
+            ...employee,
+            ...req.body
+        };
+
+        await employeeEdited.update();
+        res.json(employeeEdited);
+    })
