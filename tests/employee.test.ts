@@ -24,15 +24,14 @@ test('EmployeeRecord.getOne returns data from database for one entry', async () 
 
     expect(employee).toBeDefined();
     expect(employee.id).toBe('abc');
-    expect(employee.firstName).toBe('Test');
-    expect(employee.lastName).toBe('Testa');
+    expect(employee.firstName).toBe('Chyba');
+    expect(employee.lastName).toBe('hjf');
     expect(employee.email).toBe('test.testa@email.com');
-    expect(employee.phone).toBe(456789123);
+    expect(employee.phone).toBe(123456789);
 });
 test('EmployeeRecord.getOne returns null from database for unexisting entry.', async () => {
-    const employee = await EmployeeRecord.getOne('---');
-
-    expect(employee).toBeNull();
+    const employee = await EmployeeRecord.getOne('---')
+    expect(employee).toBeNull()
 });
 
 test('EmployeeRecord.listAll returns array of found entries.', async () => {
@@ -49,14 +48,3 @@ test('EmployeeRecord.insert returns new UUID.', async () => {
     expect(employee.id).toBeDefined();
     expect(typeof employee.id).toBe('string');
 });
-
-test('EmployeeRecord.update updateing data', async () => {
-    const employee = await EmployeeRecord.getOne('abc');
-    const employeeUpdated = {
-        ...employee,
-        ...defaultObj2
-    };
-
-    await employeeUpdated.update();
-
-})

@@ -1,5 +1,5 @@
 import {EmployeeEntity, NewEmployeeEntity} from "../types";
-import {ValidationError} from "../utils/errors";
+import {NotFoundError, ValidationError} from "../utils/errors";
 import {pool} from "../utils/db";
 import {FieldPacket} from "mysql2";
 import {v4 as uuid} from 'uuid';
@@ -38,7 +38,11 @@ export class EmployeeRecord implements EmployeeEntity {
         const [results] = await pool.execute("SELECT * FROM `employees` WHERE id = :id", {
             id,
         }) as EmployeeRecordResults;
-        return results.length === 0 ? null : new EmployeeRecord(results[0]);
+        if (results.length === 0) {
+            throw new NotFoundError('Nie można znaleźć elementu o danym ID.');
+        } else {
+            return new EmployeeRecord(results[0]);
+        }
     }
 
     static async listAll(): Promise<EmployeeEntity[]> {

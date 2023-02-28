@@ -1,6 +1,7 @@
 import {Router} from "express";
 import {EmployeeRecord} from "../records/employee.record";
 import {NewEmployeeEntity} from "../types";
+import {NotFoundError} from "../utils/errors";
 
 
 export const employeeRouter = Router();
@@ -22,11 +23,12 @@ employeeRouter
     })
     .put('/update/:id', async (req, res) => {
         const employee = await EmployeeRecord.getOne(req.params.id);
-        const employeeEdited = {
-            ...employee,
-            ...req.body
-        };
+        employee.firstName = req.body.firstName;
+        employee.lastName = req.body.lastName;
+        employee.email = req.body.email;
+        employee.phone = req.body.phone;
 
-        await employeeEdited.update();
-        res.json(employeeEdited);
+        await employee.update();
+        res.json(employee);
+        res.status(201)
     })
