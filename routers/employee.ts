@@ -1,14 +1,12 @@
 import {Router} from "express";
 import {EmployeeRecord} from "../records/employee.record";
 import {NewEmployeeEntity} from "../types";
-import {NotFoundError} from "../utils/errors";
-
 
 export const employeeRouter = Router();
 
 employeeRouter
-    .get('/', async (req, res) => {
-        const employeesList = await EmployeeRecord.listAll();
+    .get('/search/:lastName?', async (req, res) => {
+        const employeesList = await EmployeeRecord.listAll(req.params.lastName ?? ``);
         res.json(employeesList)
     })
     .get('/:id', async (req, res) => {
@@ -21,7 +19,7 @@ employeeRouter
 
         res.json(newEmployee);
     })
-    .put('/update/:id', async (req, res) => {
+    .put('/:id', async (req, res) => {
         const employee = await EmployeeRecord.getOne(req.params.id);
         employee.firstName = req.body.firstName;
         employee.lastName = req.body.lastName;

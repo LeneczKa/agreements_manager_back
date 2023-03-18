@@ -3,6 +3,7 @@ import cors from 'cors';
 import 'express-async-errors';
 import {handleError} from "./utils/errors";
 import {employeeRouter} from "./routers/employee";
+import {agreementRouter} from "./routers/agreement";
 
 import './utils/db'
 
@@ -14,6 +15,7 @@ app.use(cors({
 app.use(express.json());
 
 app.use('/employee',employeeRouter);
+app.use('/agreement',agreementRouter);
 
 app.use(handleError);
 

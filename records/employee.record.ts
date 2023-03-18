@@ -11,20 +11,20 @@ export class EmployeeRecord implements EmployeeEntity {
     public firstName: string;
     public lastName: string;
     public email: string;
-    public phone: number;
+    public phone: string;
 
     constructor(obj: NewEmployeeEntity) {
-        if (!obj.firstName.length || obj.firstName.length > 50) {
+        if (!obj.firstName || obj.firstName.length < 3 || obj.firstName.length > 20) {
             throw new ValidationError('Imię nie może byc puste i nie może być dłuższe nic 50 znaków')
         }
-        if (obj.lastName.length < 2 || obj.lastName.length > 50) {
+        if (!obj.lastName || obj.lastName.length < 2 || obj.lastName.length > 30) {
             throw new ValidationError('Nazwisko musi mieć węcej niż jeden znak i mniej nić 50.')
         }
-        if ((obj.email.length < 5 || obj.email.length > 50) || !obj.email.includes('@')) {
-            throw new ValidationError('Adres e-mail nie może być krótszy nic 5 znaków i dłuższy niż 50 znaków. Poprawny adres e-mail musi zawierać @.')
+        if ((!obj.email || obj.email.length < 5 || obj.email.length > 50) || !obj.email.includes('@')) {
+            throw new ValidationError('Adres e-mail nie może być krótszy niż 5 znaków i dłuższy niż 50 znaków. Poprawny adres e-mail musi zawierać @.')
         }
-        if (typeof obj.phone !== 'number' || String(obj.phone).length !== 9) {
-            throw new ValidationError('Numer telefonu musi być liczbą i musi zawierać 9 znaków.')
+        if (!obj.phone || String(obj.phone).length !== 9) {
+            throw new ValidationError('Numer telefonu musi mieć 9 znaków.')
         }
 
         this.id = obj.id;
@@ -45,8 +45,10 @@ export class EmployeeRecord implements EmployeeEntity {
         }
     }
 
-    static async listAll(): Promise<EmployeeEntity[]> {
-        const [results] = await pool.execute("SELECT * FROM `employees` ORDER BY `lastName` ASC") as EmployeeRecordResults;
+    static async listAll(lastName: string): Promise<EmployeeEntity[]> {
+        const [results] = await pool.execute("SELECT * FROM `employees` WHERE `lastName` LIKE :search ORDER BY `lastName` ASC", {
+            search: `${lastName}%`,
+        }) as EmployeeRecordResults;
         return results.map(obj => new EmployeeRecord(obj));
     }
 
@@ -54,7 +56,7 @@ export class EmployeeRecord implements EmployeeEntity {
         if (!this.id) {
             this.id = uuid();
         } else {
-            throw new Error('Cennot insert something that is already inserted!')
+            throw new Error('Cannot insert something that is already inserted!')
         }
         await pool.execute("INSERT INTO `employees` (`id`, `firstName`, `lastName`, `email`, `phone`) VALUES (:id, :firstName, :lastName, :email, :phone)", this)
     }
