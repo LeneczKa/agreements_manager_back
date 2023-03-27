@@ -16,7 +16,6 @@ employeeRouter
     .post('/', async (req, res) => {
         const newEmployee = new EmployeeRecord(req.body as NewEmployeeEntity);
         await newEmployee.insert();
-
         res.json(newEmployee);
     })
     .put('/:id', async (req, res) => {

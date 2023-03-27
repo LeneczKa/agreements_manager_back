@@ -47,8 +47,13 @@ export class EmployeeRecord implements EmployeeEntity {
 
     static async listAll(lastName: string): Promise<EmployeeEntity[]> {
         const [results] = await pool.execute("SELECT * FROM `employees` WHERE `lastName` LIKE :search ORDER BY `lastName` ASC", {
-            search: `${lastName}%`,
+            search: `%${lastName}%`,
         }) as EmployeeRecordResults;
+        return results.map(obj => new EmployeeRecord(obj));
+    }
+
+    static async getEmployees(): Promise<EmployeeRecord[]> {
+        const [results] = await pool.execute("SELECT * FROM `employees`") as EmployeeRecordResults;
         return results.map(obj => new EmployeeRecord(obj));
     }
 
