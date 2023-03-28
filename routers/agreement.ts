@@ -18,19 +18,22 @@ agreementRouter
     })
     .get('/:id', async (req, res) => {
         const agreement = await AgreementRecord.getOne(req.params.id);
+        console.log(agreement)
         res.json(agreement);
     })
     .post('/', async (req, res) => {
         const newAgreement = new AgreementRecord(req.body as NewAgreementEntity);
         const {body}: {
-            body: SetEmployeeForAgreement;
+            body: NewAgreementEntity;
         } = req
-        const employee = body.employeeId === '' ? null : await EmployeeRecord.getOne(body.employeeId);
-        newAgreement.employeeId1 = employee?.id ?? null;
-        newAgreement.employeeId2 = employee?.id ?? null;
+
+        const employee1 = body.employeeId1 === '' ? null : await EmployeeRecord.getOne(body.employeeId1);
+        const employee2 = body.employeeId2 === '' ? null : await EmployeeRecord.getOne(body.employeeId2);
+
+        newAgreement.employeeId1 = employee1?.id ?? null;
+        newAgreement.employeeId2 = employee2?.id ?? null;
         await newAgreement.insert();
         res.json(newAgreement);
-
     })
     .put('/:id', async (req, res) => {
         const agreement = await AgreementRecord.getOne(req.params.id);
@@ -39,7 +42,7 @@ agreementRouter
         agreement.institutionStreet = req.body.institutionStreet;
         agreement.institutionZipCode = req.body.institutionZipCode;
         agreement.personForContact = req.body.personForContact;
-        agreement.personForContactEmail = req.body.personForContactEmail;
+        agreement.personForContactMail = req.body.personForContactMail;
         agreement.personForContactPhone = req.body.personForContactPhone;
         agreement.responseDate = req.body.responseDate;
         agreement.offerSendingDate = req.body.offerSendingDate;

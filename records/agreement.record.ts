@@ -13,7 +13,7 @@ export class AgreementRecord implements AgreementEntity {
     public institutionStreet: string;
     public institutionZipCode: string;
     public personForContact: string;
-    public personForContactEmail: string;
+    public personForContactMail: string;
     public personForContactPhone: string;
     public responseDate: string;
     public offerSendingDate: string;
@@ -39,7 +39,8 @@ export class AgreementRecord implements AgreementEntity {
         if (!obj.personForContact || obj.personForContact.length > 50) {
             throw new ValidationError('Imię i nazwisko osoby do kontaktu nie może byc puste i nie może byc dłuższe niz 50 znaków.')
         }
-        if ((!obj.personForContactEmail || obj.personForContactEmail.length < 5 || obj.personForContactEmail.length > 50) || !obj.personForContactEmail.includes('@')) {
+        if ((!obj.personForContactMail || obj.personForContactMail.length < 5 || obj.personForContactMail.length > 50) || !obj.personForContactMail.includes('@')) {
+            console.log(obj.personForContactMail)
             throw new ValidationError('Adres e-mail nie może być krótszy niż 5 znaków i dłuższy niż 50 znaków. Poprawny adres e-mail musi zawierać @.')
         }
         if (!obj.personForContactPhone || String(obj.personForContactPhone).length !== 9) {
@@ -52,7 +53,7 @@ export class AgreementRecord implements AgreementEntity {
     this.institutionStreet = obj.institutionStreet;
     this.institutionZipCode = obj.institutionZipCode;
     this.personForContact = obj.personForContact;
-    this.personForContactEmail = obj.personForContactEmail;
+    this.personForContactMail = obj.personForContactMail;
     this.personForContactPhone = obj.personForContactPhone;
     this.responseDate = obj.responseDate;
     this.offerSendingDate = obj.offerSendingDate;
@@ -105,7 +106,7 @@ export class AgreementRecord implements AgreementEntity {
         } else {
             throw new Error('Cannot insert something that is already inserted!')
         }
-        await pool.execute("INSERT INTO `agreements` (`id`, `institutionName`, `institutionCity`, `institutionStreet`, `institutionZipCode`, `personForContact`, `personForContactMail`, `personForContactPhone`, `responseDate`, `offerSendingDate`, `agreementNo`, `agreementStartDate`, `agreementEndDate`, `employeeId1`, `employeeId1`, `executionDate`, `reportId`, `reportDate`, `invoiceAmount`, `invoiceDate`, `notes`) VALUES (:id, :institutionName, :institutionCity, :institutionStreet, :institutionZipCode, :personForContact, :personForContactMail, :personForContactPhone, :responseDate, :offerSendingDate, :agreementNo, :agreementStartDate, :agreementEndDate, :employeeId1, :employeeId1, :executionDate, :reportId, :reportDate, :invoiceAmount, :invoiceDate,:notes)", this)
+        await pool.execute("INSERT INTO `agreements` (`id`, `institutionName`, `institutionCity`, `institutionStreet`, `institutionZipCode`, `personForContact`, `personForContactMail`, `personForContactPhone`, `responseDate`, `offerSendingDate`, `agreementNo`, `agreementStartDate`, `agreementEndDate`, `employeeId1`, `employeeId2`, `executionDate`, `reportId`, `reportDate`, `invoiceAmount`, `invoiceDate`, `notes`) VALUES (:id, :institutionName, :institutionCity, :institutionStreet, :institutionZipCode, :personForContact, :personForContactMail, :personForContactPhone, :responseDate, :offerSendingDate, :agreementNo, :agreementStartDate, :agreementEndDate, :employeeId1, :employeeId2, :executionDate, :reportId, :reportDate, :invoiceAmount, :invoiceDate,:notes)", this)
     }
 
     async update(): Promise<void> {
@@ -116,7 +117,7 @@ export class AgreementRecord implements AgreementEntity {
             institutionStreet: this.institutionStreet,
             institutionZipCode: this.institutionZipCode,
             personForContact: this.personForContact,
-            personForContactEmail: this.personForContactEmail,
+            personForContactMail: this.personForContactMail,
             personForContactPhone: this.personForContactPhone,
             responseDate: this.responseDate,
             offerSendingDate: this.offerSendingDate,

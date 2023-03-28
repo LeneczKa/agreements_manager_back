@@ -16,7 +16,7 @@ export interface SimpleAgreementEntity {
 export interface AgreementEntity extends SimpleAgreementEntity {
     institutionZipCode: string,
     personForContact: string,
-    personForContactEmail: string,
+    personForContactMail: string,
     personForContactPhone?: string,
     offerSendingDate?: string,
     agreementStartDate?: string,
