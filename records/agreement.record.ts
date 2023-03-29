@@ -5,6 +5,7 @@ import {v4 as uuid} from "uuid";
 import {FieldPacket} from "mysql2";
 
 type AgreementRecordResults = [AgreementEntity[], FieldPacket[]];
+
 export class AgreementRecord implements AgreementEntity {
 
     public id: string;
@@ -29,7 +30,7 @@ export class AgreementRecord implements AgreementEntity {
     public invoiceDate: string;
     public notes: string;
 
-    constructor (obj: NewAgreementEntity) {
+    constructor(obj: NewAgreementEntity) {
         if (!obj.institutionName || obj.institutionName.length < 3 || obj.institutionName.length > 100) {
             throw new ValidationError('Nazwa nie może być pusta i nie może być dłuższa niż 100 znaków')
         }
@@ -47,33 +48,33 @@ export class AgreementRecord implements AgreementEntity {
             throw new ValidationError('Numer telefonu musi mieć 9 znaków.')
         }
 
-    this.id = obj.id;
-    this.institutionName = obj.institutionName;
-    this.institutionCity = obj.institutionCity;
-    this.institutionStreet = obj.institutionStreet;
-    this.institutionZipCode = obj.institutionZipCode;
-    this.personForContact = obj.personForContact;
-    this.personForContactMail = obj.personForContactMail;
-    this.personForContactPhone = obj.personForContactPhone;
-    this.responseDate = obj.responseDate;
-    this.offerSendingDate = obj.offerSendingDate;
-    this.agreementNo = obj.agreementNo;
-    this.agreementStartDate = obj.agreementStartDate;
-    this.agreementEndDate = obj.agreementEndDate;
-    this.executionDate = obj.executionDate;
-    this.employeeId1 = obj.employeeId1;
-    this.employeeId2 = obj.employeeId1;
-    this.reportId = obj.reportId;
-    this.reportDate = obj.reportDate;
-    this.invoiceAmount = obj.invoiceAmount;
-    this.invoiceDate = obj.invoiceDate;
-    this.notes = obj.notes;
+        this.id = obj.id;
+        this.institutionName = obj.institutionName;
+        this.institutionCity = obj.institutionCity;
+        this.institutionStreet = obj.institutionStreet;
+        this.institutionZipCode = obj.institutionZipCode;
+        this.personForContact = obj.personForContact;
+        this.personForContactMail = obj.personForContactMail;
+        this.personForContactPhone = obj.personForContactPhone;
+        this.responseDate = obj.responseDate;
+        this.offerSendingDate = obj.offerSendingDate;
+        this.agreementNo = obj.agreementNo;
+        this.agreementStartDate = obj.agreementStartDate;
+        this.agreementEndDate = obj.agreementEndDate;
+        this.executionDate = obj.executionDate;
+        this.employeeId1 = obj.employeeId1;
+        this.employeeId2 = obj.employeeId1;
+        this.reportId = obj.reportId;
+        this.reportDate = obj.reportDate;
+        this.invoiceAmount = obj.invoiceAmount;
+        this.invoiceDate = obj.invoiceDate;
+        this.notes = obj.notes;
     }
+
     static async getOne(id: string): Promise<AgreementRecord | null> {
         const [results] = await pool.execute("SELECT * FROM `agreements` WHERE id = :id", {
             id,
         }) as AgreementRecordResults;
-        console.log(results);
         if (results.length === 0) {
             throw new NotFoundError('Nie można znaleźć elementu o danym ID.');
         } else {
@@ -86,18 +87,27 @@ export class AgreementRecord implements AgreementEntity {
             search: `%${institutionCity}%`,
         }) as AgreementRecordResults;
         return results.map(result => {
-            const {id, institutionName, institutionCity, institutionStreet, agreementNo, agreementEndDate, executionDate, reportId,} = result;
-            return {id, institutionName, institutionCity, institutionStreet, agreementNo, agreementEndDate: agreementEndDate.toLocaleString().slice(0, 10), executionDate: executionDate.toLocaleString().slice(0, 10), reportId}
+            const {
+                id,
+                institutionName,
+                institutionCity,
+                institutionStreet,
+                agreementNo,
+                agreementEndDate,
+                executionDate,
+                reportId,
+            } = result;
+            return {
+                id,
+                institutionName,
+                institutionCity,
+                institutionStreet,
+                agreementNo,
+                agreementEndDate: agreementEndDate.toLocaleString().slice(0, 10),
+                executionDate: executionDate.toLocaleString().slice(0, 10),
+                reportId
+            }
         });
-    }
-    async insert2(): Promise<void>{
-        if (this.id) {
-            throw new Error('Cannot insert something that is already inserted!')
-        } else {
-            this.id = uuid();
-        }
-
-        await pool.execute("INSERT INTO `agreements_copy` (`id`, `institutionName`, `institutionCity`, `institutionStreet`, `institutionZipCode`, `personForContact`, `personForContactMail`, `responseDate`, `offerSendingDate`)  VALUES (:id, :institutionName, :institutionCity, :institutionStreet, :institutionZipCode, :personForContact, :personForContactMail, :responseDate, :offerSendingDate)", this)
     }
 
     async insert(): Promise<void> {
@@ -130,7 +140,7 @@ export class AgreementRecord implements AgreementEntity {
             reportId: this.reportId,
             reportDate: this.reportDate,
             invoiceAmount: this.invoiceAmount,
-            invoiceDate: this.invoiceDate,
+            invoiceDate: this.invoiceDate.toLocaleString().slice(0, 10),
             notes: this.notes,
         });
     }
