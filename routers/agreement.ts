@@ -1,6 +1,6 @@
 import {Router} from "express";
 import {AgreementRecord} from "../records/agreement.record";
-import {AgreementEntity, EmployeeEntity, NewAgreementEntity, SetEmployeeForAgreement} from "../types";
+import {NewAgreementEntity} from "../types";
 import {ValidationError} from "../utils/errors";
 import {EmployeeRecord} from "../records/employee.record";
 
@@ -44,7 +44,7 @@ agreementRouter
         await newAgreement.insert();
         res.json(newAgreement);
     })
-    .patch('/:id', async (req, res) => {
+    .patch('/update/:id', async (req, res) => {
         const {body}: {
             body: NewAgreementEntity;
         } = req
@@ -72,8 +72,8 @@ agreementRouter
         agreement.invoiceDate = body.invoiceDate;
         agreement.notes = body.notes;
 
-        const employee1 = body.employeeId1 === '' ? null : await EmployeeRecord.getOne(body.employeeId1);
-        const employee2 = body.employeeId2 === '' ? null : await EmployeeRecord.getOne(body.employeeId2);
+        const employee1 = body.employeeId1 === '' ? null : await EmployeeRecord.getOneSelected(body.employeeId1);
+        const employee2 = body.employeeId2 === '' ? null : await EmployeeRecord.getOneSelected(body.employeeId2);
 
         agreement.employeeId1 = employee1?.id ?? null;
         agreement.employeeId2 = employee2?.id ?? null;
@@ -81,24 +81,4 @@ agreementRouter
         await agreement.update();
         res.json(agreement)
         res.status(201)
-    })
-    .patch('/employee/:agreementId', async (req, res) => {
-        const {body}: {
-            body: SetEmployeeForAgreement;
-        } = req
-
-        const agreement = await AgreementRecord.getOne(req.params.agreementId);
-
-        if (agreement === null) {
-            throw new ValidationError('Nie znaleziono zlecenia z podanym ID.');
-        }
-
-        const employee = body.employeeId === '' ? null : await EmployeeRecord.getOne(body.employeeId);
-
-        agreement.employeeId1 = employee?.id ?? null;
-        await agreement.update();
-        agreement.employeeId2 = employee?.id ?? null;
-        await agreement.update();
-
-        res.json(agreement);
     });

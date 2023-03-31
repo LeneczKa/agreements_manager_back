@@ -63,7 +63,7 @@ export class AgreementRecord implements AgreementEntity {
         this.agreementEndDate = obj.agreementEndDate;
         this.executionDate = obj.executionDate;
         this.employeeId1 = obj.employeeId1;
-        this.employeeId2 = obj.employeeId1;
+        this.employeeId2 = obj.employeeId2;
         this.reportId = obj.reportId;
         this.reportDate = obj.reportDate;
         this.invoiceAmount = obj.invoiceAmount;
@@ -75,10 +75,11 @@ export class AgreementRecord implements AgreementEntity {
         const [results] = await pool.execute("SELECT * FROM `agreements` WHERE id = :id", {
             id,
         }) as AgreementRecordResults;
+        console.log(results[0])
         if (results.length === 0) {
             throw new NotFoundError('Nie można znaleźć elementu o danym ID.');
         } else {
-            return new AgreementRecord(results[0]);
+           return new AgreementRecord(results[0])
         }
     }
 
@@ -103,8 +104,8 @@ export class AgreementRecord implements AgreementEntity {
                 institutionCity,
                 institutionStreet,
                 agreementNo,
-                agreementEndDate: agreementEndDate.toLocaleString().slice(0, 10),
-                executionDate: executionDate.toLocaleString().slice(0, 10),
+                agreementEndDate,
+                executionDate,
                 reportId
             }
         });
@@ -135,12 +136,12 @@ export class AgreementRecord implements AgreementEntity {
             agreementStartDate: this.agreementStartDate,
             agreementEndDate: this.agreementEndDate,
             employeeId1: this.employeeId1,
-            employeeId2: this.employeeId1,
+            employeeId2: this.employeeId2,
             executionDate: this.executionDate,
             reportId: this.reportId,
             reportDate: this.reportDate,
             invoiceAmount: this.invoiceAmount,
-            invoiceDate: this.invoiceDate.toLocaleString().slice(0, 10),
+            invoiceDate: this.invoiceDate,
             notes: this.notes,
         });
     }
