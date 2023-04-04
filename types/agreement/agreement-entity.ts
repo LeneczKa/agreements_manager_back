@@ -1,5 +1,6 @@
-export interface NewAgreementEntity extends Omit<AgreementEntity, 'id'> {
+export interface NewAgreementEntity extends Omit<AgreementEntity, 'id' | 'count'> {
     id?: string,
+    count?: number,
 }
 
 export interface SimpleAgreementEntity {
@@ -11,6 +12,7 @@ export interface SimpleAgreementEntity {
     agreementEndDate?: string,
     executionDate?: string,
     reportId?: string,
+    count: number,
 }
 
 export interface AgreementEntity extends SimpleAgreementEntity {
@@ -27,8 +29,7 @@ export interface AgreementEntity extends SimpleAgreementEntity {
     employeeId1: string,
     employeeId2: string,
     notes?: string,
+    count: number,
 }
 
-export interface SetEmployeeForAgreement {
-    employeeId: string;
-}
+

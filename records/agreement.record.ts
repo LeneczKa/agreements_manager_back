@@ -2,7 +2,7 @@ import {AgreementEntity, NewAgreementEntity, SimpleAgreementEntity} from "../typ
 import {NotFoundError, ValidationError} from "../utils/errors";
 import {pool} from "../utils/db";
 import {v4 as uuid} from "uuid";
-import {FieldPacket} from "mysql2";
+import {FieldPacket, RowDataPacket} from "mysql2";
 
 type AgreementRecordResults = [AgreementEntity[], FieldPacket[]];
 
@@ -29,6 +29,7 @@ export class AgreementRecord implements AgreementEntity {
     public invoiceAmount: number | null;
     public invoiceDate: string;
     public notes: string;
+    public count: number
 
     constructor(obj: NewAgreementEntity) {
         if (!obj.institutionName || obj.institutionName.length < 3 || obj.institutionName.length > 100) {
@@ -41,7 +42,6 @@ export class AgreementRecord implements AgreementEntity {
             throw new ValidationError('Imię i nazwisko osoby do kontaktu nie może byc puste i nie może byc dłuższe niz 50 znaków.')
         }
         if ((!obj.personForContactMail || obj.personForContactMail.length < 5 || obj.personForContactMail.length > 50) || !obj.personForContactMail.includes('@')) {
-            console.log(obj.personForContactMail)
             throw new ValidationError('Adres e-mail nie może być krótszy niż 5 znaków i dłuższy niż 50 znaków. Poprawny adres e-mail musi zawierać @.')
         }
         if (!obj.personForContactPhone || String(obj.personForContactPhone).length !== 9) {
@@ -69,17 +69,17 @@ export class AgreementRecord implements AgreementEntity {
         this.invoiceAmount = obj.invoiceAmount;
         this.invoiceDate = obj.invoiceDate;
         this.notes = obj.notes;
+        this.count = obj.count;
     }
 
     static async getOne(id: string): Promise<AgreementRecord | null> {
         const [results] = await pool.execute("SELECT * FROM `agreements` WHERE id = :id", {
             id,
         }) as AgreementRecordResults;
-        console.log(results[0])
         if (results.length === 0) {
             throw new NotFoundError('Nie można znaleźć elementu o danym ID.');
         } else {
-           return new AgreementRecord(results[0])
+            return new AgreementRecord(results[0])
         }
     }
 
@@ -97,6 +97,7 @@ export class AgreementRecord implements AgreementEntity {
                 agreementEndDate,
                 executionDate,
                 reportId,
+                count,
             } = result;
             return {
                 id,
@@ -106,7 +107,8 @@ export class AgreementRecord implements AgreementEntity {
                 agreementNo,
                 agreementEndDate,
                 executionDate,
-                reportId
+                reportId,
+                count,
             }
         });
     }
@@ -144,5 +146,14 @@ export class AgreementRecord implements AgreementEntity {
             invoiceDate: this.invoiceDate,
             notes: this.notes,
         });
+    }
+
+    async amountOfCompletedData(id: string): Promise<number> {
+        const result = (await pool.execute("SELECT SUM (CASE WHEN `id` = '' OR `id` IS NULL THEN 1 ELSE 0 END + CASE WHEN `institutionName` = '' OR `institutionName` IS NULL THEN 1 ELSE 0 END + CASE WHEN`institutionCity` = '' OR `institutionCity` IS NULL THEN 1 ELSE 0 END + CASE WHEN`institutionStreet` = '' OR `institutionStreet` IS NULL THEN 1 ELSE 0 END + CASE WHEN`institutionZipCode` = '' OR `institutionZipCode` IS NULL THEN 1 ELSE 0 END + CASE WHEN`personForContact` = '' OR `personForContact` IS NULL THEN 1 ELSE 0 END + CASE WHEN`personForContactMail` = '' OR `personForContactMail` IS NULL THEN 1 ELSE 0 END + CASE WHEN`personForContactPhone` = '' OR `personForContactPhone` IS NULL THEN 1 ELSE 0 END + CASE WHEN`responseDate` = '' OR `responseDate` IS NULL THEN 1 ELSE 0 END + CASE WHEN`offerSendingDate` = '' OR `offerSendingDate` IS NULL THEN 1 ELSE 0 END + CASE WHEN`agreementNo` = '' OR `agreementNo` IS NULL THEN 1 ELSE 0 END + CASE WHEN`agreementStartDate` = '' OR `agreementStartDate` IS NULL THEN 1 ELSE 0 END + CASE WHEN`agreementEndDate` = '' OR `agreementEndDate` IS NULL THEN 1 ELSE 0 END + CASE WHEN`employeeId1` = '' OR `employeeId1` IS NULL THEN 1 ELSE 0 END + CASE WHEN`employeeId2` = '' OR `employeeId2` IS NULL THEN 1 ELSE 0 END + CASE WHEN`executionDate` = '' OR `executionDate` IS NULL THEN 1 ELSE 0 END + CASE WHEN`reportId` = '' OR `reportId` IS NULL THEN 1 ELSE 0 END + CASE WHEN`reportDate` = '' OR `reportDate` IS NULL THEN 1 ELSE 0 END + CASE WHEN`invoiceAmount` = '' OR `invoiceAmount` IS NULL THEN 1 ELSE 0 END + CASE WHEN`invoiceDate` = '' OR `invoiceDate` IS NULL THEN 1 ELSE 0 END) AS `count` FROM `agreements` WHERE id = :id", {
+            id: this.id
+        }));
+        const rows = <RowDataPacket[]>result[0];
+        const count = rows[0].count;
+        return count
     }
 }
