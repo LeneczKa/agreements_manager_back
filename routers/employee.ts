@@ -18,7 +18,7 @@ employeeRouter
         await newEmployee.insert();
         res.json(newEmployee);
     })
-    .put('/:id', async (req, res) => {
+    .patch('/:id', async (req, res) => {
         const employee = await EmployeeRecord.getOne(req.params.id);
         employee.firstName = req.body.firstName;
         employee.lastName = req.body.lastName;
@@ -28,4 +28,14 @@ employeeRouter
         await employee.update();
         res.json(employee);
         res.status(201)
+    })
+    .put('/:id', async(req, res) => {
+        const employee = await EmployeeRecord.getOne(req.params.id);
+        await employee.archive();
+        res.json(employee);
+        res.status(201)
+    })
+    .get('/archive/search', async (req, res) => {
+        const archiveEmployeesList = await EmployeeRecord.listArchive();
+        res.json(archiveEmployeesList)
     })

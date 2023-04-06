@@ -62,6 +62,10 @@ export class EmployeeRecord implements EmployeeEntity {
         }) as EmployeeRecordResults;
         return results.map(obj => new EmployeeRecord(obj));
     }
+    static async listArchive(): Promise<EmployeeEntity[]> | null {
+        const [results] = await pool.execute("SELECT * FROM `employees_archive` ORDER BY `lastName` ASC") as EmployeeRecordResults;
+        return results.map(obj => new EmployeeRecord(obj));
+    }
 
     static async getEmployees(): Promise<EmployeeRecord[]> {
         const [results] = await pool.execute("SELECT * FROM `employees`") as EmployeeRecordResults;
@@ -86,4 +90,13 @@ export class EmployeeRecord implements EmployeeEntity {
             phone: this.phone
         });
     }
-};
+
+    async archive(): Promise<void> {
+        await pool.execute("INSERT INTO `employees_archive` SELECT * FROM `employees` WHERE id = :id", {
+            id: this.id
+        })
+        await pool.execute("DELETE FROM `employees` WHERE id = :id", {
+            id: this.id
+        })
+    }
+}
