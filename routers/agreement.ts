@@ -80,8 +80,8 @@ agreementRouter
         agreement.invoiceDate = body.invoiceDate;
         agreement.notes = body.notes;
 
-        const employee1 = body.employeeId1 === '' ?  null : await EmployeeRecord.getOneSelected(body.employeeId1);
-        const employee2 = body.employeeId2 === '' ?  null : await EmployeeRecord.getOneSelected(body.employeeId2);
+        const employee1 = body.employeeId1 === '' ? null : await EmployeeRecord.getOneSelected(body.employeeId1);
+        const employee2 = body.employeeId2 === '' ? null : await EmployeeRecord.getOneSelected(body.employeeId2);
 
         agreement.employeeId1 = employee1?.id ?? null;
         agreement.employeeId2 = employee2?.id ?? null;
@@ -89,4 +89,19 @@ agreementRouter
         await agreement.update();
         res.json(agreement)
         res.status(201)
-    });
+    })
+    .put('/:id', async (req, res) => {
+        const agreement = await AgreementRecord.getOne(req.params.id);
+        await agreement.archiveAgreement();
+        res.json(agreement);
+        res.status(201)
+    })
+    .delete('/:id', async (req, res) => {
+        const agreement = await AgreementRecord.getOne(req.params.id);
+        if(!agreement){
+            throw new ValidationError('Nie ma takiego zlecenia.')
+        }
+        await agreement.delete();
+        res.status(200)
+        res.end();
+    })
