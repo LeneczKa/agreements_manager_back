@@ -1,4 +1,10 @@
-import {AgreementEntity, NewAgreementEntity, SimpleAgreementEntity} from "../types";
+import {
+    AgreementEntity,
+    ArchiveAgreementEntity,
+    NewAgreementEntity,
+    SimpleAgreementEntity,
+    SimpleArchiveAgreementEntity
+} from "../types";
 import {NotFoundError, ValidationError} from "../utils/errors";
 import {pool} from "../utils/db";
 import {v4 as uuid} from "uuid";
@@ -163,12 +169,47 @@ export class AgreementRecord implements AgreementEntity {
         });
     }
 
-    async amountOfCompletedData(id: string): Promise<number> {
+    async amountOfCompletedData?(id: string): Promise<number> {
         const result = (await pool.execute("SELECT SUM (CASE WHEN `id` = '' OR `id` IS NULL THEN 1 ELSE 0 END + CASE WHEN `institutionName` = '' OR `institutionName` IS NULL THEN 1 ELSE 0 END + CASE WHEN`institutionCity` = '' OR `institutionCity` IS NULL THEN 1 ELSE 0 END + CASE WHEN`institutionStreet` = '' OR `institutionStreet` IS NULL THEN 1 ELSE 0 END + CASE WHEN`institutionZipCode` = '' OR `institutionZipCode` IS NULL THEN 1 ELSE 0 END + CASE WHEN`personForContact` = '' OR `personForContact` IS NULL THEN 1 ELSE 0 END + CASE WHEN`personForContactMail` = '' OR `personForContactMail` IS NULL THEN 1 ELSE 0 END + CASE WHEN`personForContactPhone` = '' OR `personForContactPhone` IS NULL THEN 1 ELSE 0 END + CASE WHEN`responseDate` = '' OR `responseDate` IS NULL THEN 1 ELSE 0 END + CASE WHEN`offerSendingDate` = '' OR `offerSendingDate` IS NULL THEN 1 ELSE 0 END + CASE WHEN`agreementNo` = '' OR `agreementNo` IS NULL THEN 1 ELSE 0 END + CASE WHEN`agreementStartDate` = '' OR `agreementStartDate` IS NULL THEN 1 ELSE 0 END + CASE WHEN`agreementEndDate` = '' OR `agreementEndDate` IS NULL THEN 1 ELSE 0 END + CASE WHEN`employeeId1` = '' OR `employeeId1` IS NULL THEN 1 ELSE 0 END + CASE WHEN`employeeId2` = '' OR `employeeId2` IS NULL THEN 1 ELSE 0 END + CASE WHEN`executionDate` = '' OR `executionDate` IS NULL THEN 1 ELSE 0 END + CASE WHEN`reportId` = '' OR `reportId` IS NULL THEN 1 ELSE 0 END + CASE WHEN`reportDate` = '' OR `reportDate` IS NULL THEN 1 ELSE 0 END + CASE WHEN`invoiceAmount` = '' OR `invoiceAmount` IS NULL THEN 1 ELSE 0 END + CASE WHEN`invoiceDate` = '' OR `invoiceDate` IS NULL THEN 1 ELSE 0 END) AS `count` FROM `agreements` WHERE id = :id", {
             id: this.id
         }));
         const rows = <RowDataPacket[]>result[0];
         const count = rows[0].count;
         return count
+    }
+
+    static async getOneArchive(id: string): Promise<ArchiveAgreementEntity | null> {
+        const [results] = await pool.execute("SELECT * FROM `agreements_archive` WHERE id = :id", {
+            id,
+        }) as AgreementRecordResults;
+        if (results.length === 0) {
+            throw new NotFoundError('Nie można znaleźć elementu o danym ID.');
+        } else {
+            return new AgreementRecord(results[0])
+        }
+    }
+
+    static async listAllArchive(institutionCity: string): Promise<SimpleArchiveAgreementEntity[]> {
+        const [results] = await pool.execute("SELECT * FROM `agreements_archive` WHERE `institutionCity` LIKE :search ORDER BY `executionDate` ASC", {
+            search: `%${institutionCity}%`,
+        }) as AgreementRecordResults;
+        return results.map(result => {
+            const {
+                id,
+                institutionName,
+                institutionCity,
+                agreementNo,
+                executionDate,
+                reportId,
+            } = result;
+            return {
+                id,
+                institutionName,
+                institutionCity,
+                agreementNo,
+                executionDate,
+                reportId,
+            }
+        });
     }
 }
