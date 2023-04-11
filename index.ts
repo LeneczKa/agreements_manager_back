@@ -1,12 +1,13 @@
 import express from 'express';
 import cors from 'cors';
 import 'express-async-errors';
+import rateLimit from "express-rate-limit";
+import './utils/db'
 import {handleError} from "./utils/errors";
 import {employeeRouter} from "./routers/employee";
 import {agreementRouter} from "./routers/agreement";
 import {archiveRouter} from "./routers/archive";
 import {config} from "./config/config";
-import './utils/db'
 
 const app = express();
 
@@ -15,12 +16,12 @@ app.use(cors({
 }));
 app.use(express.json());
 app.use(rateLimit({
-    windowMS: 5 * 60 * 1000,
+    windowMs: 5 * 60 * 100,
     max: 100,
 }))
 
-app.use('/employee',employeeRouter);
-app.use('/agreement',agreementRouter);
+app.use('/employee', employeeRouter);
+app.use('/agreement', agreementRouter);
 app.use('/archive', archiveRouter);
 app.use(handleError);
 
