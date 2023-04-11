@@ -5,14 +5,19 @@ import {handleError} from "./utils/errors";
 import {employeeRouter} from "./routers/employee";
 import {agreementRouter} from "./routers/agreement";
 import {archiveRouter} from "./routers/archive";
+import {config} from "./config/config";
 import './utils/db'
 
 const app = express();
 
 app.use(cors({
-    origin: 'http://localhost:3000',
+    origin: config.corsOrigin,
 }));
 app.use(express.json());
+app.use(rateLimit({
+    windowMS: 5 * 60 * 1000,
+    max: 100,
+}))
 
 app.use('/employee',employeeRouter);
 app.use('/agreement',agreementRouter);
