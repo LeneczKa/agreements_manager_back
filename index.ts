@@ -15,10 +15,10 @@ app.use(cors({
     origin: config.corsOrigin,
 }));
 app.use(express.json());
-app.use(rateLimit({
-    windowMs: 5 * 60 * 100,
-    max: 100,
-}))
+// app.use(rateLimit({
+//     windowMs: 5 * 60 * 1000,
+//     max: 100,
+// }));
 
 app.use('/employee', employeeRouter);
 app.use('/agreement', agreementRouter);
