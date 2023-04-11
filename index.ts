@@ -1,21 +1,27 @@
 import express from 'express';
 import cors from 'cors';
 import 'express-async-errors';
+import rateLimit from "express-rate-limit";
+import './utils/db'
 import {handleError} from "./utils/errors";
 import {employeeRouter} from "./routers/employee";
 import {agreementRouter} from "./routers/agreement";
 import {archiveRouter} from "./routers/archive";
-import './utils/db'
+import {config} from "./config/config";
 
 const app = express();
 
 app.use(cors({
-    origin: 'http://localhost:3000',
+    origin: config.corsOrigin,
 }));
 app.use(express.json());
+app.use(rateLimit({
+    windowMs: 5 * 60 * 100,
+    max: 100,
+}))
 
-app.use('/employee',employeeRouter);
-app.use('/agreement',agreementRouter);
+app.use('/employee', employeeRouter);
+app.use('/agreement', agreementRouter);
 app.use('/archive', archiveRouter);
 app.use(handleError);
 
