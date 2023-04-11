@@ -18,13 +18,13 @@ Aplikacja umożliwia dodawanie, edycję, usuwanie, a także archiwizację zlece�
 Niestety nie udało mi się w pełni dokończyć projektu. W kolejnym etapie pracy powstanie cześć umożliwiająca rejestrację i logowanie. 
 <br/>
 
-Front-end reposotiry - https://github.com/LeneczKa/agreements-manager-front
+Frontend repository - https://github.com/LeneczKa/agreements-manager-front
 <br/>
 
 Database dump - https://github.com/LeneczKa/agreements_manager_back/blob/77570b4e3e2a53d70d7d8ce873894b0deb8abf7e/db_agreement_manager.sql
 <br/>
 
-Dziękuję bardzo za pomoc, wsparcie i naprawienie błędów na pewnym etapie tworzenia aplikacji Przemkowi- https://github.com/Przekol. 
+Dziękuję bardzo za pomoc, wsparcie i naprawienie błędów na pewnym etapie tworzenia aplikacji Przemkowi- https://github.com/Przekol 
 
 ## Wykorzystane technologie
 
