@@ -9,9 +9,11 @@ Niestety nie udało mi się wrzucić aplikacji na zewnętrzny serwer.
 Projekt na zaliczenie kursu MegaK
 
 Założeniem aplikacji było stworzenie przyjaznego narzędzia do śledzenia i dokumentacji kolejnych etapów realizacji prac zleconych przez klienta. 
-Inspiracją do powstania tej aplikacji jest moje dotyczczasowe doświadczenie pracy w systemie jakości ISO który wymusza tworzenie takiej dokumentacji. 
-Aplikacja umożliwia dodawanie, edycję, usuwanie, a takrze archiwizację zleceń, które uzyskają 100% kompletności. Dodatkowo posiada panej do dodawani, edycji i usuwania pracowników zaanagażowych w realizację zleceń. Oraz podglą zarchiwizowanych zleceń bez możliwości ich edycji.
-Niestety nie udało mi się w pełni dokończyć projektu i w kolejnym etapie prac nad nim powstanie cześć umożliwiająca logowanie i rejestrację. 
+Inspiracją do powstania tej aplikacji jest doświadczenie pracy w systemie zarządzania jakością ISO9001, który wymusza tworzenie takiej dokumentacji.
+<br/>
+Aplikacja umożliwia dodawanie, edycję, usuwanie, a także archiwizację zleceń, które uzyskały 100% kompletności. Dodatkowo posiada panel do dodawania, edycji i usuwania pracowników zaanagażowych w realizację zleceń. Oraz podgląd zarchiwizowanych zleceń, bez możliwości ich edycji.
+<br/>
+Niestety nie udało mi się w pełni dokończyć projektu. W kolejnym etapie pracy powstanie cześć umożliwiająca rejestrację i logowanie. 
 <br/>
 Front-end reposotiry - https://github.com/LeneczKa/agreements-manager-front
 <br/>
